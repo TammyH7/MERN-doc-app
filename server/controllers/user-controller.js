@@ -1,8 +1,5 @@
 // import models
-const { User } = require('../models');
-const Doctor = require("../models/doctorsModel");
-const Hospital = require("../models/hospitalModel");
-const Appointment = require("../models/appointmentsModel");
+const { User, Doctor, Hospital, Appointment } = require('../models');
 
 // import sign token function from auth
 const { signToken } = require('../utils/auth');
@@ -11,8 +8,10 @@ module.exports = {
   // get a single user by either their id or their firstName, lastName
   async getSingleUser({ user = null, params }, res) {
     const foundUser = await User.findOne({
-      $or: [{ _id: user ? user._id : params.id }, { firstName: params.firstName,
-      lastName: params.lastName }],
+      $or: [{ _id: user ? user._id : params.id }, {
+        firstName: params.firstName,
+        lastName: params.lastName
+      }],
     });
 
     if (!foundUser) {
@@ -28,13 +27,14 @@ module.exports = {
       return res.status(400).json({ message: 'Something is wrong!' });
     }
     const token = signToken(user);
-    res.json({token, user});
+    res.json({ token, user });
   },
 
   // login a user, sign a token, and send it back (to client/src/components/LoginForm.js)
   // {body} is destructured req.body
   async login({ body }, res) {
-    const user = await User.findOne({ $or: [{ email: body.email }] 
+    const user = await User.findOne({
+      $or: [{ email: body.email }]
     });
     if (!user) {
       return res.status(400).json({ message: "Can't find this user" });
